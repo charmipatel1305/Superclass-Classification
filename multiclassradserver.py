@@ -314,16 +314,16 @@ sampler = WeightedRandomSampler(subclass_weights, len(subclass_weights))
 # # Create a sampler for validation data
 val_sampler = torch.utils.data.sampler.SequentialSampler(val_dataset)
 
-train_loader = DataLoader(train_dataset, batch_size=32, sampler=sampler)
-val_loader = DataLoader(val_dataset, batch_size=32, sampler=val_sampler)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=64, sampler=sampler)
+val_loader = DataLoader(val_dataset, batch_size=64, sampler=val_sampler)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 # optimizer and loss function
 
 # define cnn model
 model = resnet_model1
 
 # define optimizer
-optimizer = Adam(model.parameters(), lr = 0.0005)
+optimizer = Adam(model.fc.parameters(), lr = 0.0001)
 
 # define loss function
 criterion = CrossEntropyLoss()
