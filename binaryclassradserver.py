@@ -73,26 +73,23 @@ gdown.download(url, download_path, quiet=False)
 with zipfile.ZipFile(download_path, 'r') as ziphandler:  #this unzip the folder once downlaoded 
     ziphandler.extractall(dataset_folder)
     
-# Load the data back into memory
+# Load the images/superclass labels/ subclass labels back into memory
 file_pathimages = './data/images/images/image_list.pkl'
 with open(file_pathimages, 'rb') as f:
     images = pickle.load(f)
 
+with open('superclass_labels.pkl', 'rb') as f:
+    superclass_labels = pickle.load(f)
+
+with open('subclass_labels.pkl', 'rb') as f:
+    subclass_labels = pickle.load(f)
+    
 #check if cuda is supported to the system
 print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #check the version of cuda
 print("Pytorch CUDA Version is", torch.version.cuda)
 print("Whether CUDA is supported by our system:", torch.cuda.is_available())
-# Load the images/superclass labels/ subclass labels back into memory
-with open('image_list.pkl', 'rb') as f:
-    images = pickle.load(f)
-    
-with open('superclass_labels.pkl', 'rb') as f:
-    superclass_labels = pickle.load(f)
-
-with open('subclass_labels.pkl', 'rb') as f:
-    subclass_labels = pickle.load(f)
     
 #split data into train/val/test set
 x_train, x_test, y_train, y_test, z_train, z_test = train_test_split(images, superclass_labels, subclass_labels, test_size=0.3, stratify=subclass_labels, shuffle=True)
