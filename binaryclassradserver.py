@@ -156,7 +156,7 @@ import keras
 import tensorflow as tf
 from keras.models import load_model
 
-model = load_model('D:/One Drive/OneDrive - DePaul University/Datasets/BreaKHis_v1/Code/TransferLearning/RadImageNet-ResNet50_notop.h5')
+model = load_model('RadImageNet-ResNet50_notop.h5')
 keras_weights = model.get_weights()
 # print(keras_weights)
 
