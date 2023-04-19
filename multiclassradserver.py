@@ -197,17 +197,15 @@ resnet_model1.load_state_dict(new_state_dict, strict=False)
 # Save the updated state dict to a file
 torch.save(resnet_model1.state_dict(), 'RadImageNet.pt')
 
-
-
-
-
 for name, param in resnet_model1.named_parameters():
     if 'weight' or  'bias' in name:
         print(f'Layer Name: {name}, Weight size: {param.size()}')
 
-# Freeze the layers
-for param in resnet_model1.parameters():
-    param.requires_grad = False
+#freeze all layers except fc
+for name, param in resnet_model1.named_parameters():
+    if 'fc' not in name:
+        param.requires_grad = False
+
 # Modify the first convolutional layer to accept images of size 256x256
 resnet_model1.conv1 = torch.nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
 
@@ -250,13 +248,6 @@ print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Pytorch CUDA Version is", torch.version.cuda)
 print("Whether CUDA is supported by our system:", torch.cuda.is_available())
-
-
-# Load the images/superclass labels/ subclass labels back into memory
-file_pathimages = './data/images/images/image_list.pkl'
-with open(file_pathimages, 'rb') as f:
-    images = pickle.load(f)
-    
 
 file_pathimages = './data/images/images/image_list.pkl'
 with open(file_pathimages, 'rb') as f:
@@ -660,7 +651,7 @@ for i in range(num_trials):
         #     if counter >= patience:
         #         print(f"Early stopping after {epoch} epochs.")
         #     break
-        
+        print("For Trial:",i, "Train subgroup accuracy:", trainoverall_subgroup, "Val subgroup accuracy:", valoverall_subgroup, "Test subgroup accuracy:", testoverall_subgroup,"\nTest Accuracy over each subgroups:", testsubgroup_accuracy, "\ntest Worst Group Accuracy:",min(testsubgroup_accuracy))
     # append accuracy values for each subgroup to the dataframes
     for j, trainacc_sub, trainacc_super in zip(subgroups, trainsubgroup_accuracy, trainsuperclass_accuracy):
         df1 = df1.append({'trial': i, 'subtype': j, 'Train ERM subgroup accuracy': trainacc_sub, 'Train ERM superclass accuracy': trainacc_super}, ignore_index=True)
