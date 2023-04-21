@@ -341,7 +341,8 @@ resnet_model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, 
 num_ftrs = resnet_model.fc.in_features
 resnet_model.fc = torch.nn.Linear(num_ftrs, 2)
 # define resnet50 cnn model
-model =  resnet_model.to(device)
+# model =  resnet_model.to(device)
+model =  resnet_model
 
 # define optimizer
 optimizer = Adam(model.parameters(), lr = 0.0001)
@@ -367,14 +368,15 @@ def train(epoch):
         inputs, labels, subclass = data
         inputs = inputs.float()
         labels = labels.float()
+
         # print(labels)
         # print(subclass)
-        inputs = inputs.to(device)
-        labels = labels.to(device)
-        subclass = subclass.to(device)
+        # inputs = inputs.to(device)
+        # labels = labels.to(device)
+        # subclass = subclass.to(device)
         # predcition for training set
         outputs = model(inputs)
-        print(outputs)
+        # print(outputs)
         
         outputs = outputs.flatten()
         total += labels.size(0)
@@ -383,8 +385,8 @@ def train(epoch):
         y_2 = torch.zeros(len(outputs))
         y_2[outputs>=0.0] = 1
         y_2= y_2.int()
-        y_2 = y_2.to(device)
-        print(y_2)
+        # y_2 = y_2.to(device)
+        # print(y_2)
         
         for subclasses in range(num_subclasses):
             subclass_idx = subclass == subclasses
@@ -439,9 +441,10 @@ def val(epoch):
             inputs, labels,subclass = data
             inputs = inputs.float()
             labels = labels.float()
+
             # print(labels)
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            # inputs = inputs.to(device)
+            # labels = labels.to(device)
             
             # predcition for training set
             outputs = model(inputs)
@@ -458,7 +461,7 @@ def val(epoch):
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
             y_2 = y_2.int()
-            y_2 = y_2.to(device)
+            # y_2 = y_2.to(device)
             
             for subclasses in range(num_subclasses):
                 subclass_idx = subclass == subclasses
@@ -501,8 +504,8 @@ def test(epoch):
             inputs, labels,subclass = data
             inputs = inputs.float()
             labels = labels.float()
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            # inputs = inputs.to(device)
+            # labels = labels.to(device)
 
             # print(labels)
             
@@ -521,7 +524,7 @@ def test(epoch):
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
             y_2 = y_2.int()
-            y_2 = y_2.to(device)
+            # y_2 = y_2.to(device)
             
             for subclasses in range(num_subclasses):
                 subclass_idx = subclass == subclasses
