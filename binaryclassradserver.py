@@ -550,7 +550,7 @@ def test(epoch):
         return test_accuracy, subgroup_accuracy
         
 # number of epochs
-n_epochs = 2
+n_epochs = 58
 tr_loss = []
 tr_accuracies = []
 val_loss = []
