@@ -339,7 +339,7 @@ for param in resnet_model.parameters():
 resnet_model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
 
 num_ftrs = resnet_model.fc.in_features
-resnet_model.fc = torch.nn.Linear(num_ftrs, 2)
+resnet_model.fc = torch.nn.Linear(num_ftrs, 1)
 # define resnet50 cnn model
 # model =  resnet_model.to(device)
 model =  resnet_model
