@@ -124,31 +124,30 @@ val_dataset = YourDataset(x_val, y_val, z_val)
 test_dataset = YourDataset(x_test, y_test, z_test)
 
 # #use of gdro loss
-# subclass_labels = torch.tensor(z_train)
-# subclasses = torch.unique(subclass_labels)
-# subclass_freqs = []
+subclass_labels = torch.tensor(z_train)
+subclasses = torch.unique(subclass_labels)
+subclass_freqs = []
 
-# for subclass in subclasses:
-#     subclass_counts = sum(subclass_labels == subclass)
-#     subclass_freqs.append(1/subclass_counts)
+for subclass in subclasses:
+    subclass_counts = sum(subclass_labels == subclass)
+    subclass_freqs.append(1/subclass_counts)
 
-# subclass_weights = torch.zeros_like(subclass_labels).float()
+subclass_weights = torch.zeros_like(subclass_labels).float()
 
-# for idx, label in enumerate(subclass_labels):
-#     subclass_weights[idx] = subclass_freqs[int(label)]
+for idx, label in enumerate(subclass_labels):
+    subclass_weights[idx] = subclass_freqs[int(label)]
 
 
 
-# # Create a sampler to handle imbalanced data for multiclass
-# class_counts = np.bincount(z_train)
-# weights = 1 / class_counts[z_train]
-# weights = torch.FloatTensor(weights)
-# sampler = WeightedRandomSampler(weights, len(weights))
-#sampler = WeightedRandomSampler(subclass_weights, len(subclass_weights))
-# # Create a sampler for validation data
-#val_sampler = torch.utils.data.sampler.SequentialSampler(val_dataset)
+# Create a sampler to handle imbalanced data for multiclass
+class_counts = np.bincount(z_train)
+weights = 1 / class_counts[z_train]
+weights = torch.FloatTensor(weights)
+sampler = WeightedRandomSampler(subclass_weights, len(subclass_weights))
+# Create a sampler for validation data
+val_sampler = torch.utils.data.sampler.SequentialSampler(val_dataset)
 
-train_loader = DataLoader(train_dataset, batch_size=16)
+train_loader = DataLoader(train_dataset, batch_size=16, sampler=sampler)
 val_loader = DataLoader(val_dataset, batch_size=16)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 import torch
@@ -404,14 +403,50 @@ def train(epoch):
         # clearing the gradients of the model parameters
         optimizer.zero_grad()
         
-        # compute loss
-        loss_train = criterion(outputs, labels)
+        # # compute ERM loss
+        # loss = criterion(outputs, labels)
         # print(loss_train)
+        # compute gDRO loss
+        q = torch.tensor([])
+        eta = 0.01
+        normalize_loss=False
+        batch_size = inputs.shape[0]
+        
+        if len(q) == 0:
+            q = torch.ones(num_subclasses).to(device)
+            q /= q.sum()
+
+        losses = torch.zeros(num_subclasses).to(device)
+
+        subclass_counts = torch.zeros(num_subclasses).to(device)
+        
+        # computes gDRO loss
+        # get relative frequency of samples in each subclass
+        for subclasses in range(num_subclasses):
+            subclass_idx = subclass == subclasses
+            subclass_counts[subclasses] = torch.sum(subclass_idx)
+
+            # only compute loss if there are actually samples in that class
+            if torch.sum(subclass_idx) > 0:
+                losses[subclasses] = criterion(outputs[subclass_idx], labels[subclass_idx])
+
+        # update q
+        if model.training:
+            q *= torch.exp(eta * losses.data)
+            q /= q.sum()
+
+        if normalize_loss:
+            losses *= subclass_counts
+            loss = torch.dot(losses, q)
+            loss /= batch_size
+            loss *= num_subclasses
+        else:
+            loss = torch.dot(losses, q)
         
         # compute updates weights of all the parameters
-        loss_train.backward()
+        loss.backward()
         optimizer.step()
-        tr_loss += loss_train.item()
+        tr_loss += loss.item()
 
     # Calculate training loss value
     train_loss_value = tr_loss/len(train_loader) 
