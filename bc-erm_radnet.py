@@ -545,7 +545,7 @@ max_worst_accuracy = 0
 
 patience = 10
 best_val_loss = float('inf')
-num_trials = 30
+num_trials = 1
 df1 = pd.DataFrame(columns=['trial', 'subtype', 'Train ERM accuracy'])
 df2 = pd.DataFrame(columns=['trial', 'subtype', 'Val ERM accuracy'])
 df3 = pd.DataFrame(columns=['trial', 'subtype', 'Test ERM accuracy'])
@@ -601,3 +601,8 @@ for i in range(num_trials):
     # print("For Trial:",i,"Train Accuracy:", temptrain_acc, "\nTrain Accuracy over each subgroups:", trainsubgroup_acc, "\nTrain Worst Group Accuracy:",min(trainsubgroup_acc))
     # print("For Trial:",i,"Val Accuracy:", tempval_acc, "\nVal Accuracy over each subgroups:", valsubgroup_acc, "\nVal Worst Group Accuracy:",min(valsubgroup_acc))
     print("For Trial:",i,"Test Accuracy:", temptest_acc,"\nTest Accuracy over each subgroups:", testsubgroup_acc, "\ntest Worst Group Accuracy:",min(testsubgroup_acc))
+      
+# assuming that df1 is your data frame
+df1.to_csv('Train_bc-erm_radnet.csv', index=False)
+df2.to_csv('Val_bc-erm_radnet.csv', index=False)
+df3.to_csv('Test_bc-erm_radnet.csv', index=False)
