@@ -402,8 +402,8 @@ def train(epoch):
     print("Epoch: {:.3f}, Loss: {:.3f}, Train_Accuracy: {:.3f}".format(epoch+1, train_loss_value, train_accuracy)) 
     # print('confusion matrix of training images: {}'.format(confusion_matrix))
 
-    print("Epoch:", epoch+1,"\nTrain Accuracy:", train_accuracy, "\nTrain Accuracy over subgroups:", subgroup_accuracy, "\nTrain Worst Group Accuracy:",
-               min(subgroup_accuracy))
+    # print("Epoch:", epoch+1,"\nTrain Accuracy:", train_accuracy, "\nTrain Accuracy over subgroups:", subgroup_accuracy, "\nTrain Worst Group Accuracy:",
+            #    min(subgroup_accuracy))
     
     return train_accuracy, subgroup_accuracy 
         
@@ -461,10 +461,10 @@ def val(epoch):
             correct += (y_2 == labels).sum().item()
             val_accuracy = correct / total
             
-        # print("Epoch: {:.3f}, Loss: {:.3f}, Val Accuracy: {:.3f}".format(epoch+1, val_loss_value, val_accuracy)) 
+        print("Epoch: {:.3f}, Loss: {:.3f}, Val Accuracy: {:.3f}".format(epoch+1, val_loss_value, val_accuracy)) 
         # print('confusion matrix of validation images: {}'.format(confusion_matrix)) 
-        print("Epoch:", epoch+1,"\nVal Accuracy:", val_accuracy, "\nVal Accuracy over subgroups:", subgroup_accuracy, "\nVal Worst Group Accuracy:",
-               min(subgroup_accuracy))       
+        # print("Epoch:", epoch+1,"\nVal Accuracy:", val_accuracy, "\nVal Accuracy over subgroups:", subgroup_accuracy, "\nVal Worst Group Accuracy:",
+            #    min(subgroup_accuracy))       
     
         return val_accuracy, subgroup_accuracy
         
@@ -525,10 +525,10 @@ def test(epoch):
             correct += (y_2 == labels).sum().item()
             test_accuracy = correct / total
             
-        # print("Epoch: {:.3f}, Loss: {:.3f}, Test Accuracy: {:.3f}".format(epoch+1, test_loss_value, test_accuracy)) 
+        print("Epoch: {:.3f}, Loss: {:.3f}, Test Accuracy: {:.3f}".format(epoch+1, test_loss_value, test_accuracy)) 
         # print('confusion matrix of testing images: {}'.format(confusion_matrix))
-        print("Epoch:", epoch+1,"\nTest Accuracy:", test_accuracy, "\nTest Accuracy over subgroups:", subgroup_accuracy, "\nTest Worst Group Accuracy:",
-               min(subgroup_accuracy)) 
+        # print("Epoch:", epoch+1,"\nTest Accuracy:", test_accuracy, "\nTest Accuracy over subgroups:", subgroup_accuracy, "\nTest Worst Group Accuracy:",
+            #   min(subgroup_accuracy)) 
    
         return test_accuracy, subgroup_accuracy
         
