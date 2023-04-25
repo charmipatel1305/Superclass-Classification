@@ -534,7 +534,7 @@ def test(epoch):
         
         
 # number of epochs
-n_epochs = 68
+n_epochs = 3
 tr_loss = []
 tr_accuracies = []
 val_loss = []
