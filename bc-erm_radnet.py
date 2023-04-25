@@ -86,7 +86,7 @@ print("Whether CUDA is supported by our system:", torch.cuda.is_available())
 # with open('subclass_labels.pkl', 'wb') as f:
 #     pickle.dump(subclass_labels, f)
 
-file_pathimages = './superclass/data/images/images/image_list.pkl'
+file_pathimages = '~/superclass/data/images/images/image_list.pkl'
 with open(file_pathimages, 'rb') as f:
     images = pickle.load(f)
 
