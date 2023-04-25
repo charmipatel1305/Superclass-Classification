@@ -1,0 +1,10 @@
+trial,subtype,Val ERM accuracy
+0,ductal_carcinoma,0.4205607476635514
+0,lobular_carcinoma,0.6398104265402843
+0,tubular_adenoma,0.5225225225225225
+0,fibroadenoma,0.6195652173913043
+0,phyllodes_tumor,0.9620081411126187
+0,papillary_carcinoma,0.96875
+0,adenosis,0.8171428571428572
+0,mucinous_carcinoma,0.78
+0,overall,0.8121613485851896
