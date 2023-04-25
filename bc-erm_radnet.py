@@ -86,7 +86,7 @@ print("Whether CUDA is supported by our system:", torch.cuda.is_available())
 # with open('subclass_labels.pkl', 'wb') as f:
 #     pickle.dump(subclass_labels, f)
 
-file_pathimages = './data/images/images/image_list.pkl'
+file_pathimages = '~/superclass/data/images/images/image_list.pkl'
 with open(file_pathimages, 'rb') as f:
     images = pickle.load(f)
 
@@ -543,7 +543,7 @@ test_loss = []
 test_accuracies = []
 max_worst_accuracy = 0
 
-patience = 10
+patience = 1 
 best_val_loss = float('inf')
 num_trials = 1
 df1 = pd.DataFrame(columns=['trial', 'subtype', 'Train ERM accuracy'])
