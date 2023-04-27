@@ -306,14 +306,18 @@ resnet_model.load_state_dict(new_state_dict, strict=False)
 #     print(name)
 #     print(param)
 
-lt=10
-cntr = 0
-for child in resnet_model.children():
-    cntr+=1
+# lt=10
+# cntr = 0
+# for child in resnet_model.children():
+#     cntr+=1
 
-    if cntr < lt:
-        for param in child.parameters():
-            param.requires_grad = False
+#     if cntr < lt:
+#         for param in child.parameters():
+#             param.requires_grad = False
+# Freeze all layers except the fc layer
+for name, param in resnet_model.named_parameters():
+    if "fc" not in name:
+        param.requires_grad = False
 
 num_ftrs = resnet_model.fc.in_features
 resnet_model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
@@ -331,7 +335,7 @@ model = resnet_model.to(device)
 # print(model)
 
 # define optimizer
-optimizer = Adam(model.parameters(), lr = 0.00001)
+optimizer = Adam(model.parameters(), lr = 0.0001)
 
 # define loss function
 criterion = BCEWithLogitsLoss()
