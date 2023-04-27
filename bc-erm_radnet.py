@@ -331,7 +331,7 @@ model = resnet_model.to(device)
 # print(model)
 
 # define optimizer
-optimizer = Adam(model.parameters(), lr = 0.0001)
+optimizer = Adam(model.parameters(), lr = 0.00001)
 
 # define loss function
 criterion = BCEWithLogitsLoss()
