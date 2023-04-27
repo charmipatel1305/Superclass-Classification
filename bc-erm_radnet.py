@@ -127,9 +127,9 @@ train_dataset = YourDataset(x_train, y_train, z_train)
 val_dataset = YourDataset(x_val, y_val, z_val)
 test_dataset = YourDataset(x_test, y_test, z_test)
 
-train_loader = DataLoader(train_dataset, batch_size=16)
-val_loader = DataLoader(val_dataset, batch_size=16)
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=32)
+val_loader = DataLoader(val_dataset, batch_size=32)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 model = load_model('RadImageNet-ResNet50_notop.h5')
 keras_weights = model.get_weights()
