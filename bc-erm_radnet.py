@@ -319,8 +319,18 @@ for name, param in resnet_model.named_parameters():
     if "fc" not in name:
         param.requires_grad = False
 
+# num_ftrs = resnet_model.fc.in_features
+# resnet_model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+
+# Modify the fc layer
 num_ftrs = resnet_model.fc.in_features
-resnet_model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+resnet_model.fc = nn.Sequential(
+    nn.Linear(num_ftrs, 512),
+    nn.ReLU(inplace=True),
+    nn.Linear(512, 256),
+    nn.ReLU(inplace=True),
+    nn.Linear(256, 1)
+)
 
 
 print(torch.cuda.is_available())
