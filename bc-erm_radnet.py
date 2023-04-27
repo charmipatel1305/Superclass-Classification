@@ -306,32 +306,17 @@ resnet_model.load_state_dict(new_state_dict, strict=False)
 #     print(name)
 #     print(param)
 
-# lt=10
-# cntr = 0
-# for child in resnet_model.children():
-#     cntr+=1
+lt=11
+cntr = 0
+for child in resnet_model.children():
+    cntr+=1
 
-#     if cntr < lt:
-#         for param in child.parameters():
-#             param.requires_grad = False
-# Freeze all layers except the fc layer
-for name, param in resnet_model.named_parameters():
-    if "fc" not in name:
-        param.requires_grad = False
+    if cntr < lt:
+        for param in child.parameters():
+            param.requires_grad = False
 
-# num_ftrs = resnet_model.fc.in_features
-# resnet_model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
-
-# Modify the fc layer
 num_ftrs = resnet_model.fc.in_features
-resnet_model.fc = nn.Sequential(
-    nn.Linear(num_ftrs, 512),
-    nn.ReLU(inplace=True),
-    nn.Linear(512, 256),
-    nn.ReLU(inplace=True),
-    nn.Linear(256, 1)
-)
-
+resnet_model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
 
 print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
