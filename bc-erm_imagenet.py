@@ -374,7 +374,7 @@ max_worst_accuracy = 0
 
 patience = 10
 best_val_loss = float('inf')
-num_trials = 1
+num_trials = 30
 df1 = pd.DataFrame(columns=['trial', 'subtype', 'Train ERM accuracy'])
 df2 = pd.DataFrame(columns=['trial', 'subtype', 'Val ERM accuracy'])
 df3 = pd.DataFrame(columns=['trial', 'subtype', 'Test ERM accuracy'])
