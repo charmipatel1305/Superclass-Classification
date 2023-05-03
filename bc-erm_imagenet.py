@@ -356,7 +356,7 @@ def test(epoch):
         
         
 # number of epochs
-n_epochs = 4
+n_epochs = 58
 tr_loss = []
 tr_accuracies = []
 val_loss = []
@@ -367,7 +367,7 @@ max_worst_accuracy = 0
 
 patience = 10
 best_val_loss = float('inf')
-num_trials = 1
+num_trials = 30
 df1 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Train ERM accuracy', 'Train ERM loss'])
 df2 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Val ERM accuracy', 'Val ERM loss'])
 df3 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Test ERM accuracy', 'Test ERM loss'])
