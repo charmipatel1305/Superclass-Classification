@@ -227,7 +227,7 @@ def train(epoch):
     # print("Train Accuracy:", accuracy, "\nTrain Accuracy over subgroups:", subgroup_accuracy, "\nTrain Worst Group Accuracy:",
     #           min(subgroup_accuracy))
     
-    return train_accuracy, subgroup_accuracy 
+    return train_accuracy, subgroup_accuracy, train_loss_value
         
 def val(epoch):
     
@@ -288,16 +288,9 @@ def val(epoch):
         # print("Val Accuracy:", accuracy, "\nVal Accuracy over subgroups:", subgroup_accuracy, "\nVal Worst Group Accuracy:",
         #       min(subgroup_accuracy))       
     
-        return val_accuracy, subgroup_accuracy
+        return val_accuracy, subgroup_accuracy, val_loss_value
         
         
-import csv
-
-
-# Open the CSV file in write mode and write an empty string this will empty csv file if it has any values 
-with open('your_file.csv', mode='w', newline='') as file:
-    file.write('')
-    
 def test(epoch):
     
     model.eval()
@@ -359,11 +352,11 @@ def test(epoch):
         # print("Test Accuracy:", accuracy, "\nTest Accuracy over subgroups:", subgroup_accuracy, "\nTest Worst Group Accuracy:",
         #       min(subgroup_accuracy)) 
    
-        return test_accuracy, subgroup_accuracy
+        return test_accuracy, subgroup_accuracy, test_loss_value
         
         
 # number of epochs
-n_epochs = 68
+n_epochs = 58
 tr_loss = []
 tr_accuracies = []
 val_loss = []
@@ -374,44 +367,55 @@ max_worst_accuracy = 0
 
 patience = 10
 best_val_loss = float('inf')
-num_trials = 30
-df1 = pd.DataFrame(columns=['trial', 'subtype', 'Train ERM accuracy'])
-df2 = pd.DataFrame(columns=['trial', 'subtype', 'Val ERM accuracy'])
-df3 = pd.DataFrame(columns=['trial', 'subtype', 'Test ERM accuracy'])
-subgroups = {'adenosis',
+num_trials = 1
+df1 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Train ERM accuracy', 'Train ERM loss'])
+df2 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Val ERM accuracy', 'Val ERM loss'])
+df3 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Test ERM accuracy', 'Test ERM loss'])
+minmax_acc = pd.DataFrame(columns=['trial', 'epochs', 'Min_subtype', 'Min subclass accuracy', 'Max_subtype', 'Max subclass accuracy'])
+
+subgroups = ['adenosis',
             'fibroadenoma',
             'tubular_adenoma',
             'phyllodes_tumor',
             'ductal_carcinoma',
             'lobular_carcinoma',
             'mucinous_carcinoma',
-            'papillary_carcinoma'}
+            'papillary_carcinoma']
 
 # training the model
 for i in range(num_trials):
     for epoch in range(n_epochs):
-        temptrain_acc, trainsubgroup_acc = train(epoch)
-        tempval_acc, valsubgroup_acc = val(epoch)
-        temptest_acc, testsubgroup_acc = test(epoch)
+        temptrain_acc, trainsubgroup_acc, train_loss = train(epoch)
+        tempval_acc, valsubgroup_acc, val_loss = val(epoch)
+        temptest_acc, testsubgroup_acc, test_loss = test(epoch)
         
-    # append accuracy values for each subgroup to the dataframes
-    for j, acc in zip(subgroups, trainsubgroup_acc):
-        df1 = df1.append({'trial': i, 'subtype': j, 'Train ERM accuracy': acc}, ignore_index=True)
-    
-    # add overall accuracy to Train gDRO accuracy for each trial
-    df1 = df1.append({'trial': i, 'subtype': 'overall', 'Train ERM accuracy': temptrain_acc}, ignore_index=True)
-    
-    for j, acc in zip(subgroups, valsubgroup_acc):
-        df2 = df2.append({'trial': i, 'subtype': j, 'Val ERM accuracy': acc}, ignore_index=True)
-    
-    # add overall accuracy to Val gDRO accuracy for each trial
-    df2 = df2.append({'trial': i, 'subtype': 'overall', 'Val ERM accuracy': tempval_acc}, ignore_index=True)
-    
-    for j, acc in zip(subgroups, testsubgroup_acc):
-        df3 = df3.append({'trial': i, 'subtype': j, 'Test ERM accuracy': acc}, ignore_index=True)
+        test_accuracies.append(temptest_acc)
+
         
-    # add overall accuracy to Test gDRO accuracy for each trial
-    df3 = df3.append({'trial': i, 'subtype': 'overall', 'Test ERM accuracy': temptest_acc}, ignore_index=True)
+        min_val = min(testsubgroup_acc)
+        min_index = testsubgroup_acc.argmin()
+        max_val = max(testsubgroup_acc)
+        max_index = testsubgroup_acc.argmax()
+        minmax_acc = minmax_acc.append({'trial': i, 'epochs': epoch, 'Min_subtype': min_index, 'Min subclass accuracy': min_val, 'Max_subtype': max_index, 'Max subclass accuracy': max_val}, ignore_index=True)
+        
+        # append accuracy values for each subgroup to the dataframes
+        for j, acc in zip(subgroups, trainsubgroup_acc):
+            df1 = df1.append({'trial': i, 'epochs': epoch, 'subtype': j, 'Train ERM accuracy': acc, 'Train ERM loss': train_loss}, ignore_index=True)
+        
+        # add overall accuracy to Train gDRO accuracy for each trial
+        df1 = df1.append({'trial': i, 'epochs': epoch, 'subtype': 'overall', 'Train ERM accuracy': temptrain_acc, 'Train ERM loss': train_loss}, ignore_index=True)
+        
+        for j, acc in zip(subgroups, valsubgroup_acc):
+            df2 = df2.append({'trial': i , 'epochs': epoch, 'subtype': j, 'Val ERM accuracy': acc, 'Val ERM loss': val_loss}, ignore_index=True)
+        
+        # add overall accuracy to Val gDRO accuracy for each trial
+        df2 = df2.append({'trial': i, 'epochs': epoch, 'subtype': 'overall', 'Val ERM accuracy': tempval_acc, 'Val ERM loss': val_loss}, ignore_index=True)
+        
+        for j, acc in zip(subgroups, testsubgroup_acc):
+            df3 = df3.append({'trial': i , 'epochs': epoch, 'subtype': j, 'Test ERM accuracy': acc, 'Test ERM loss': test_loss,},  ignore_index=True)
+            
+        # add overall accuracy to Test gDRO accuracy for each trial
+        df3 = df3.append({'trial': i,'epochs': epoch, 'subtype': 'overall', 'Test ERM accuracy': temptest_acc, 'Test ERM loss': test_loss}, ignore_index=True)
 
         # Check if the validation loss has increased and update the best model if it hasn't
         # a =  min(valsubgroup_acc)
@@ -434,3 +438,4 @@ for i in range(num_trials):
 df1.to_csv('Train_bc-erm_imagenet.csv', index=False)
 df2.to_csv('Val_bc-erm_imagenet.csv', index=False)
 df3.to_csv('Test_bc-erm_imagenet.csv', index=False)
+minmax_acc.to_csv('MinMax_acc.csv', index=False)
