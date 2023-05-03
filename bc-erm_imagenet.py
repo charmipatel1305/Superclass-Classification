@@ -371,7 +371,7 @@ num_trials = 1
 df1 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Train ERM accuracy', 'Train ERM loss'])
 df2 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Val ERM accuracy', 'Val ERM loss'])
 df3 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Test ERM accuracy', 'Test ERM loss'])
-minmax_acc = pd.DataFrame(columns=['trial', 'epochs', 'Min_subtype', 'Min subclass accuracy', 'Max_subtype', 'Max subclass accuracy'])
+minmax_acc_test = pd.DataFrame(columns=['trial', 'epochs', 'Min_subtype', 'Min subclass accuracy', 'Max_subtype', 'Max subclass accuracy'])
 
 subgroups = ['adenosis',
             'fibroadenoma',
@@ -396,7 +396,7 @@ for i in range(num_trials):
         min_index = testsubgroup_acc.argmin()
         max_val = max(testsubgroup_acc)
         max_index = testsubgroup_acc.argmax()
-        minmax_acc = minmax_acc.append({'trial': i, 'epochs': epoch, 'Min_subtype': min_index, 'Min subclass accuracy': min_val, 'Max_subtype': max_index, 'Max subclass accuracy': max_val}, ignore_index=True)
+        minmax_acc_test = minmax_acc_test.append({'trial': i, 'epochs': epoch, 'Min_subtype': min_index, 'Min subclass accuracy': min_val, 'Max_subtype': max_index, 'Max subclass accuracy': max_val}, ignore_index=True)
         
         # append accuracy values for each subgroup to the dataframes
         for j, acc in zip(subgroups, trainsubgroup_acc):
@@ -438,4 +438,4 @@ for i in range(num_trials):
 df1.to_csv('Train_bc-erm_imagenet.csv', index=False)
 df2.to_csv('Val_bc-erm_imagenet.csv', index=False)
 df3.to_csv('Test_bc-erm_imagenet.csv', index=False)
-minmax_acc.to_csv('MinMax_acc.csv', index=False)
+minmax_acc_test.to_csv('MinMax_acc.csv', index=False)
