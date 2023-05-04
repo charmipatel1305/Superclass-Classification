@@ -267,7 +267,7 @@ def train(epoch):
     # print("Train Accuracy:", accuracy, "\nTrain Accuracy over subgroups:", subgroup_accuracy, "\nTrain Worst Group Accuracy:",
     #           min(subgroup_accuracy))
     
-    return train_loss_value, train_accuracy, subgroup_accuracy 
+    return train_accuracy, subgroup_accuracy, train_loss_value
         
 def val(epoch):
     
