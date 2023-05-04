@@ -398,12 +398,12 @@ def test(epoch):
         
 # number of epochs
 n_epochs = 4
-# tr_loss = []
-# tr_accuracies = []
-# val_loss = []
-# val_accuracies = []
-# test_loss = []
-# test_accuracies = []
+tr_loss = []
+tr_accuracies = []
+val_loss = []
+val_accuracies = []
+test_loss = []
+test_accuracies = []
 max_worst_accuracy = 0
 
 patience = 10
