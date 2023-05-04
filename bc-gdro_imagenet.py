@@ -261,9 +261,9 @@ def train(epoch):
 
     # Calculate training loss value
     train_loss_value = tr_loss/len(train_loader) 
-    print("Epoch: {:.3f}, Loss: {:.3f}, Train_Accuracy: {:.3f}".format(epoch+1, train_loss_value, train_accuracy)) 
+    # print("Epoch: {:.3f}, Loss: {:.3f}, Train_Accuracy: {:.3f}".format(epoch+1, train_loss_value, train_accuracy)) 
     # print('confusion matrix of training images: {}'.format(confusion_matrix))
-
+    print("Epoch: {:.3f}, Loss: {:.3f}, Train_Accuracy: {:.3f}".format(epoch+1, train_loss_value, train_accuracy)) 
     # print("Train Accuracy:", accuracy, "\nTrain Accuracy over subgroups:", subgroup_accuracy, "\nTrain Worst Group Accuracy:",
     #           min(subgroup_accuracy))
     
@@ -299,9 +299,9 @@ def val(epoch):
             total += labels.size(0)
             # print(total)
             
-            # loss_train = criterion(outputs, labels)
-            # tr_loss += loss_train.item()
-            val_loss_value = tr_loss/len(test_loader)
+            loss_train = criterion(outputs, labels)
+            val_loss += loss_train.item()
+            val_loss_value = val_loss/len(test_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
@@ -322,12 +322,13 @@ def val(epoch):
             correct += (y_2 == labels).sum().item()
             val_accuracy = correct / total
             
-        print("Epoch: {:.3f},  Val Accuracy: {:.3f}".format(epoch+1,  val_accuracy)) 
+        # print("Epoch: {:.3f},  Val Accuracy: {:.3f}".format(epoch+1,  val_accuracy))
+        print("Epoch: {:.3f}, Loss: {:.3f}, Val Accuracy: {:.3f}".format(epoch+1, val_loss_value, val_accuracy)) 
         # print('confusion matrix of validation images: {}'.format(confusion_matrix)) 
         # print("Val Accuracy:", accuracy, "\nVal Accuracy over subgroups:", subgroup_accuracy, "\nVal Worst Group Accuracy:",
         #       min(subgroup_accuracy))       
     
-        return val_accuracy, subgroup_accuracy
+        return val_accuracy, subgroup_accuracy, val_loss_value
         
         
 def test(epoch):
@@ -361,9 +362,9 @@ def test(epoch):
             total += labels.size(0)
             # print(total)
             
-            # loss_train = criterion(outputs, labels)
-            # tr_loss += loss_train.item()
-            # test_loss_value = tr_loss/len(test_loader)
+            loss_train = criterion(outputs, labels)
+            tr_loss += loss_train.item()
+            test_loss_value = tr_loss/len(test_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
@@ -386,16 +387,16 @@ def test(epoch):
             correct += (y_2 == labels).sum().item()
             test_accuracy = correct / total
             
-        print("Epoch: {:.3f}, Test Accuracy: {:.3f}".format(epoch+1, test_accuracy)) 
+        print("Epoch: {:.3f}, Loss: {:.3f}, Test Accuracy: {:.3f}".format(epoch+1, test_loss_value, test_accuracy)) 
         # print('confusion matrix of testing images: {}'.format(confusion_matrix))
         # print("Test Accuracy:", test_accuracy, "\nTest Accuracy over subgroups:", subgroup_accuracy, "\nTest Worst Group Accuracy:",
             #  min(subgroup_accuracy)) 
    
-        return test_accuracy, subgroup_accuracy
+        return test_accuracy, subgroup_accuracy, test_loss_value
         
         
 # number of epochs
-n_epochs = 68
+n_epochs = 4
 tr_loss = []
 tr_accuracies = []
 val_loss = []
@@ -406,44 +407,55 @@ max_worst_accuracy = 0
 
 patience = 10
 best_val_loss = float('inf')
-num_trials = 30
-df1 = pd.DataFrame(columns=['trial', 'subtype', 'Train gDRO accuracy'])
-df2 = pd.DataFrame(columns=['trial', 'subtype', 'Val gDRO accuracy'])
-df3 = pd.DataFrame(columns=['trial', 'subtype', 'Test gDRO accuracy'])
-subgroups = {'adenosis',
+num_trials = 1
+df1 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Train ERM accuracy', 'Train ERM loss'])
+df2 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Val ERM accuracy', 'Val ERM loss'])
+df3 = pd.DataFrame(columns=['trial', 'epochs', 'subtype', 'Test ERM accuracy', 'Test ERM loss'])
+minmax_acc_test = pd.DataFrame(columns=['trial', 'epochs', 'Min_subtype', 'Min subclass accuracy', 'Max_subtype', 'Max subclass accuracy'])
+
+subgroups = ['adenosis',
             'fibroadenoma',
             'tubular_adenoma',
             'phyllodes_tumor',
             'ductal_carcinoma',
             'lobular_carcinoma',
             'mucinous_carcinoma',
-            'papillary_carcinoma'}
+            'papillary_carcinoma']
 
 # training the model
 for i in range(num_trials):
     for epoch in range(n_epochs):
-        temptrain_loss, temptrain_acc,trainsubgroup_acc= train(epoch)
-        tempval_acc, valsubgroup_acc = val(epoch)
-        temptest_acc, testsubgroup_acc = test(epoch)
+        temptrain_acc, trainsubgroup_acc, train_loss = train(epoch)
+        tempval_acc, valsubgroup_acc, val_loss = val(epoch)
+        temptest_acc, testsubgroup_acc, test_loss = test(epoch)
         
-    # append accuracy values for each subgroup to the dataframes
-    for j, acc in zip(subgroups, trainsubgroup_acc):
-        df1 = df1.append({'trial': i, 'subtype': j, 'Train gDRO accuracy': acc}, ignore_index=True)
-    
-    # add overall accuracy to Train gDRO accuracy for each trial
-    df1 = df1.append({'trial': i, 'subtype': 'overall', 'Train gDRO accuracy': temptrain_acc}, ignore_index=True)
-    
-    for j, acc in zip(subgroups, valsubgroup_acc):
-        df2 = df2.append({'trial': i, 'subtype': j, 'Val gDRO accuracy': acc}, ignore_index=True)
-    
-    # add overall accuracy to Val gDRO accuracy for each trial
-    df2 = df2.append({'trial': i, 'subtype': 'overall', 'Val gDRO accuracy': tempval_acc}, ignore_index=True)
-    
-    for j, acc in zip(subgroups, testsubgroup_acc):
-        df3 = df3.append({'trial': i, 'subtype': j, 'Test gDRO accuracy': acc}, ignore_index=True)
-    
-    # add overall accuracy to Test gDRO accuracy for each trial
-    df3 = df3.append({'trial': i, 'subtype': 'overall', 'Test gDRO accuracy': temptest_acc}, ignore_index=True)
+        test_accuracies.append(temptest_acc)
+
+        
+        min_val = min(testsubgroup_acc)
+        min_index = testsubgroup_acc.argmin()
+        max_val = max(testsubgroup_acc)
+        max_index = testsubgroup_acc.argmax()
+        minmax_acc_test = minmax_acc_test.append({'trial': i, 'epochs': epoch, 'Min_subtype': min_index, 'Min subclass accuracy': min_val, 'Max_subtype': max_index, 'Max subclass accuracy': max_val}, ignore_index=True)
+        
+        # append accuracy values for each subgroup to the dataframes
+        for j, acc in zip(subgroups, trainsubgroup_acc):
+            df1 = df1.append({'trial': i, 'epochs': epoch, 'subtype': j, 'Train ERM accuracy': acc, 'Train ERM loss': train_loss}, ignore_index=True)
+        
+        # add overall accuracy to Train gDRO accuracy for each trial
+        df1 = df1.append({'trial': i, 'epochs': epoch, 'subtype': 'overall', 'Train ERM accuracy': temptrain_acc, 'Train ERM loss': train_loss}, ignore_index=True)
+        
+        for j, acc in zip(subgroups, valsubgroup_acc):
+            df2 = df2.append({'trial': i , 'epochs': epoch, 'subtype': j, 'Val ERM accuracy': acc, 'Val ERM loss': val_loss}, ignore_index=True)
+        
+        # add overall accuracy to Val gDRO accuracy for each trial
+        df2 = df2.append({'trial': i, 'epochs': epoch, 'subtype': 'overall', 'Val ERM accuracy': tempval_acc, 'Val ERM loss': val_loss}, ignore_index=True)
+        
+        for j, acc in zip(subgroups, testsubgroup_acc):
+            df3 = df3.append({'trial': i , 'epochs': epoch, 'subtype': j, 'Test ERM accuracy': acc, 'Test ERM loss': test_loss,},  ignore_index=True)
+            
+        # add overall accuracy to Test gDRO accuracy for each trial
+        df3 = df3.append({'trial': i,'epochs': epoch, 'subtype': 'overall', 'Test ERM accuracy': temptest_acc, 'Test ERM loss': test_loss}, ignore_index=True)
 
         # Check if the validation loss has increased and update the best model if it hasn't
         # a =  min(valsubgroup_acc)
