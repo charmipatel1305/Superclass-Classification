@@ -301,7 +301,7 @@ def val(epoch):
             
             loss_train = criterion(outputs, labels)
             val_loss += loss_train.item()
-            val_loss_value = val_loss/len(test_loader)
+            val_loss_value = val_loss/len(val_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
@@ -363,8 +363,8 @@ def test(epoch):
             # print(total)
             
             loss_train = criterion(outputs, labels)
-            tr_loss += loss_train.item()
-            test_loss_value = tr_loss/len(test_loader)
+            test_loss += loss_train.item()
+            test_loss_value = test_loss/len(test_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
