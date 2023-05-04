@@ -479,3 +479,4 @@ for i in range(num_trials):
 df1.to_csv('Train_bc-gdro_imagenet.csv', index=False)
 df2.to_csv('Val_bc-gdro_imagenet.csv', index=False)
 df3.to_csv('Test_bc-gdro_imagenet.csv', index=False)
+minmax_acc_test.to_csv('MinMaxgdro_acc.csv', index=False)
