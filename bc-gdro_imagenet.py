@@ -398,12 +398,12 @@ def test(epoch):
         
 # number of epochs
 n_epochs = 4
-tr_loss = []
-tr_accuracies = []
-val_loss = []
-val_accuracies = []
-test_loss = []
-test_accuracies = []
+# tr_loss = []
+# tr_accuracies = []
+# val_loss = []
+# val_accuracies = []
+# test_loss = []
+# test_accuracies = []
 max_worst_accuracy = 0
 
 patience = 10
@@ -430,7 +430,7 @@ for i in range(num_trials):
         tempval_acc, valsubgroup_acc, val_loss = val(epoch)
         temptest_acc, testsubgroup_acc, test_loss = test(epoch)
         
-        test_accuracies.append(temptest_acc)
+        # test_accuracies.append(temptest_acc)
 
         
         min_val = min(testsubgroup_acc)

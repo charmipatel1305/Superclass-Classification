@@ -238,6 +238,7 @@ def val(epoch):
     num_samples = np.zeros(num_subclasses)
     subgroup_correct = np.zeros(num_subclasses)
     subgroup_correct_total = 0
+    val_loss = 0
 
     with torch.no_grad():
         total = 0
@@ -259,9 +260,9 @@ def val(epoch):
             total += labels.size(0)
             # print(total)
             
-            loss_train = criterion(outputs, labels)
-            tr_loss += loss_train.item()
-            val_loss_value = tr_loss/len(test_loader)
+            loss_val= criterion(outputs, labels)
+            val_loss += loss_val.item()
+            val_loss_value = tr_loss/len(val_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
