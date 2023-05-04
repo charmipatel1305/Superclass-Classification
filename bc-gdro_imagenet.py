@@ -278,7 +278,7 @@ def val(epoch):
     num_samples = np.zeros(num_subclasses)
     subgroup_correct = np.zeros(num_subclasses)
     subgroup_correct_total = 0
-
+    val_loss = 0
     with torch.no_grad():
         total = 0
         correct = 0
@@ -337,6 +337,7 @@ def test(epoch):
     nb_classes = 2
     confusion_matrix = torch.zeros(nb_classes, nb_classes)
     subgroup_correct_total = 0
+    test_loss = 0
 
     with torch.no_grad():
         total = 0
