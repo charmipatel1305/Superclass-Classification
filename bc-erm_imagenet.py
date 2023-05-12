@@ -1,4 +1,3 @@
-import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
@@ -8,6 +7,7 @@ from numpy import asarray
 import numpy as np
 import pickle
 import torchvision
+import pandas as pd
 
 import torch.nn as nn
 import torch.optim as optim
