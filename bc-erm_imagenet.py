@@ -7,6 +7,7 @@ from PIL import Image
 from numpy import asarray
 import numpy as np
 import pickle
+import torchvision
 
 import torch.nn as nn
 import torch.optim as optim
@@ -131,33 +132,33 @@ val_loader = DataLoader(val_dataset, batch_size=16)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-import torchvision
-model = torchvision.models.resnet50(weights=True)
+# import torchvision
+# model = torchvision.models.resnet50(weights=True)
 
-lt=10
-cntr = 0
-for child in model.children():
-    cntr+=1
+# lt=10
+# cntr = 0
+# for child in model.children():
+#     cntr+=1
 
-    if cntr < lt:
-        for param in child.parameters():
-            param.requires_grad = False
+#     if cntr < lt:
+#         for param in child.parameters():
+#             param.requires_grad = False
 
-num_ftrs = model.fc.in_features
-model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
-# optimizer and loss function
+# num_ftrs = model.fc.in_features
+# model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+# # optimizer and loss function
 
-# define cnn model
-model = model.to(device)
+# # define cnn model
+# model = model.to(device)
 
-# print(model)
+# # print(model)
 
-# define optimizer
-optimizer = Adam(model.parameters(), lr = 0.0001)
+# # define optimizer
+# optimizer = Adam(model.parameters(), lr = 0.0001)
 
-# define loss function
-criterion = BCEWithLogitsLoss()
-# print(model)
+# # define loss function
+# criterion = BCEWithLogitsLoss()
+# # print(model)
 #train the model
 def train(epoch):
     total = 0
@@ -260,9 +261,9 @@ def val(epoch):
             total += labels.size(0)
             # print(total)
             
-            loss_val= criterion(outputs, labels)
+            loss_val = criterion(outputs, labels)
             val_loss += loss_val.item()
-            val_loss_value = tr_loss/len(val_loader)
+            val_loss_value = val_loss/len(val_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
@@ -323,9 +324,9 @@ def test(epoch):
             total += labels.size(0)
             # print(total)
             
-            loss_train = criterion(outputs, labels)
-            tr_loss += loss_train.item()
-            test_loss_value = tr_loss/len(test_loader)
+            loss_test = criterion(outputs, labels)
+            test_loss += loss_test.item()
+            test_loss_value = test_loss/len(test_loader)
             
             y_2 = torch.zeros(len(outputs))
             y_2[outputs>=0.0] = 1
@@ -385,6 +386,34 @@ subgroups = ['adenosis',
 
 # training the model
 for i in range(num_trials):
+    model = torchvision.models.resnet50(weights=True)
+
+    lt=10
+    cntr = 0
+    for child in model.children():
+        cntr+=1
+
+        if cntr < lt:
+            for param in child.parameters():
+                param.requires_grad = False
+
+    num_ftrs = model.fc.in_features
+    model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+        
+    # optimizer and loss function
+
+    # define cnn model
+    model = model.to(device)
+
+    # print(model)
+
+    # define optimizer
+    optimizer = Adam(model.parameters(), lr = 0.0001)
+
+    # define loss function
+    criterion = BCEWithLogitsLoss()
+    # print(model)
+    
     for epoch in range(n_epochs):
         temptrain_acc, trainsubgroup_acc, train_loss = train(epoch)
         tempval_acc, valsubgroup_acc, val_loss = val(epoch)
