@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
 from PIL import Image
 from numpy import asarray
+
 import pickle
 import torchvision
 import pandas as pd
@@ -132,32 +133,32 @@ val_loader = DataLoader(val_dataset, batch_size=16)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-import torchvision
-model = torchvision.models.resnet50(weights=True)
+# import torchvision
+# model = torchvision.models.resnet50(weights=True)
 
-lt=10
-cntr = 0
-for child in model.children():
-    cntr+=1
+# lt=10
+# cntr = 0
+# for child in model.children():
+#     cntr+=1
 
-    if cntr < lt:
-        for param in child.parameters():
-            param.requires_grad = False
+#     if cntr < lt:
+#         for param in child.parameters():
+#             param.requires_grad = False
 
-num_ftrs = model.fc.in_features
-model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
-# optimizer and loss function
+# num_ftrs = model.fc.in_features
+# model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+# # optimizer and loss function
 
-# define cnn model
-model = model.to(device)
+# # define cnn model
+# model = model.to(device)
 
-# print(model)
+# # print(model)
 
-# define optimizer
-optimizer = Adam(model.parameters(), lr = 0.0001)
+# # define optimizer
+# optimizer = Adam(model.parameters(), lr = 0.0001)
 
-# define loss function
-criterion = BCEWithLogitsLoss()
+# # define loss function
+# criterion = BCEWithLogitsLoss()
 # # print(model)
 #train the model
 def train(epoch):
@@ -388,31 +389,31 @@ subgroups = ['adenosis',
 for i in range(num_trials):
     model = torchvision.models.resnet50(weights=True)
 
-    # lt=10
-    # cntr = 0
-    # for child in model.children():
-    #     cntr+=1
+    lt=10
+    cntr = 0
+    for child in model.children():
+        cntr+=1
 
-    #     if cntr < lt:
-    #         for param in child.parameters():
-    #             param.requires_grad = False
+        if cntr < lt:
+            for param in child.parameters():
+                param.requires_grad = False
 
-    # num_ftrs = model.fc.in_features
-    # model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
+    num_ftrs = model.fc.in_features
+    model.fc = torch.nn.Linear(in_features = num_ftrs, out_features = 1, bias=True)
         
-    # # optimizer and loss function
+    # optimizer and loss function
 
-    # # define cnn model
-    # model = model.to(device)
+    # define cnn model
+    model = model.to(device)
 
-    # # print(model)
+    # print(model)
 
-    # # define optimizer
-    # optimizer = Adam(model.parameters(), lr = 0.0001)
+    # define optimizer
+    optimizer = Adam(model.parameters(), lr = 0.0001)
 
-    # # define loss function
-    # criterion = BCEWithLogitsLoss()
-    # # print(model)
+    # define loss function
+    criterion = BCEWithLogitsLoss()
+    # print(model)
     
     for epoch in range(n_epochs):
         temptrain_acc, trainsubgroup_acc, train_loss = train(epoch)
